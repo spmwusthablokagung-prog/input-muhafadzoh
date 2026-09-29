@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2E7D32">
+  <title>Sistem Setoran Hafalan</title>
+  <style>
+    * { box-sizing: border-box; }
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7f6;
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+      color: #333;
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background-color: #2E7D32;
+      color: white;
+      padding: 16px 20px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .header h2:first-child { font-size: 20px; font-weight: bold; }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+      padding: 20px 16px 20px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      background-color: white;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    select:focus {
+      outline: none;
+      border-color: #2E7D32;
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    }
+
+    .card-siswa {
+      background-color: white;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      border-left: 5px solid #2E7D32;
+    }
+    .nama-siswa {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 16px; /* 16px mencegah auto-zoom di iPhone */
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #2E7D32;
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    }
+
+    .btn-container {
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+      width: 100%;
+      background-color: white;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.12);
+      display: none;
+    }
+    .link-wa {
+      max-width: 608px;
+      margin: 0 auto 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .link-wa a { color: #1565c0; font-weight: 600; }
+    .btn-bar {
+      display: flex;
+      gap: 10px;
+      max-width: 608px;
+      margin: 0 auto;
+    }
+    .btn-bersihkan {
+      flex: 1;
+      background-color: white;
+      color: #c62828;
+      border: 2px solid #c62828;
+      border-radius: 8px;
+      padding: 14px 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-bersihkan:hover { background-color: #ffebee; }
+    .btn-bersihkan:disabled { opacity: 0.5; cursor: default; }
+    .btn-simpan {
+      flex: 2;
+      background-color: #2E7D32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .btn-simpan:hover { background-color: #1b5e20; }
+    .btn-simpan:disabled { background-color: #a5d6a7; cursor: default; }
+
+    .pesan-kosong {
+      text-align: center;
+      color: #666;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    /* Layar HP kecil */
+    @media (max-width: 480px) {
+      .header { padding: 12px 14px; }
+      .header h2 { font-size: 15px; }
+      .header h2:first-child { font-size: 17px; }
+      .container { padding: 14px 12px 20px; }
+      .card-siswa { padding: 12px; }
+      .btn-container { padding: 10px 12px; }
+      .btn-bersihkan, .btn-simpan { font-size: 14px; padding: 13px 6px; }
+    }
+    </style>
+</head>
+<body>
+
+  <div class="header">
+    <h2>Sistem Setoran Hafalan</h2>
+    <h2>Muadalah Wustha Al-Amiriyah</h2>
+    <h2>Blokagung Banyuwangi</h2>
+  </div>
+
+  <div class="container">
+    <label for="kelas">Pilih Kelas:</label>
+    <select id="kelas" onchange="loadSiswa()">
+      <option value="">-- Pilih Kelas --</option>
+    </select>
+
+    <label for="hafalan">Pilih Hafalan:</label>
+    <select id="hafalan" onchange="loadSiswa()">
+      <option value="">-- Pilih Hafalan --</option>
+    </select>
+
+    <div id="daftarSiswa"></div>
+  </div>
+
+  <div class="btn-container" id="btnContainer">
+    <div class="link-wa" id="linkWaBox" style="display:none;">
+      <a id="linkWa" href="#">Data tersimpan. Ketuk di sini jika WhatsApp belum terbuka</a>
+    </div>
+    <div class="btn-bar">
+      <button id="btnBersihkan" class="btn-bersihkan" onclick="bersihkan()">BERSIHKAN</button>
+      <button id="btnSimpan" class="btn-simpan" onclick="simpan()">SIMPAN & WA</button>
+    </div>
+  </div>
+
+  <script>
+    // GANTI dengan URL Web App dari Apps Script (Deploy > Manage deployments), berakhiran /exec
+    var API_URL = "PASTE_URL_WEB_APP_DI_SINI";
+
+    function apiGet(params) {
+      var q = Object.keys(params).map(function(k) {
+        return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+      }).join("&");
+      return fetch(API_URL + "?" + q).then(function(r) { return r.json(); }).then(function(j) {
+        if (!j.ok) throw new Error(j.error || "Terjadi kesalahan di server");
+        return j;
+      });
+    }
+
+    function apiPost(payload) {
+      // Tanpa header khusus agar tidak memicu preflight CORS
+      return fetch(API_URL, { method: "POST", body: JSON.stringify(payload) })
+        .then(function(r) { return r.json(); })
+        .then(function(j) {
+          if (!j.ok) throw new Error(j.error || "Terjadi kesalahan di server");
+          return j;
+        });
+    }
+
+    function isiDropdown(id, items) {
+      var select = document.getElementById(id);
+      items.forEach(function(item) {
+        var option = document.createElement("option");
+        option.text = item;
+        option.value = item;
+        select.add(option);
+      });
+    }
+
+    apiGet({ action: "init" }).then(function(j) {
+      isiDropdown("kelas", j.kelas);
+      isiDropdown("hafalan", j.hafalan);
+    }).catch(function(err) {
+      document.getElementById("daftarSiswa").innerHTML =
+        "<div class='pesan-kosong'>Gagal memuat data. Periksa koneksi internet lalu muat ulang halaman.</div>";
+    });
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    var permintaanTerakhir = 0;
+
+    function loadSiswa() {
+      var kelas = document.getElementById("kelas").value;
+      var hafalan = document.getElementById("hafalan").value;
+      var div = document.getElementById("daftarSiswa");
+      var btnBox = document.getElementById("btnContainer");
+      document.getElementById("linkWaBox").style.display = "none";
+
+      if (!kelas || !hafalan) {
+        div.innerHTML = kelas ? "<div class='pesan-kosong'>Pilih hafalan untuk menampilkan daftar siswa.</div>" : "";
+        btnBox.style.display = "none";
+        return;
+      }
+
+      div.innerHTML = "<div class='pesan-kosong'>Memuat data...</div>";
+      btnBox.style.display = "none";
+
+      var nomorPermintaan = ++permintaanTerakhir;
+
+      apiGet({ action: "siswa", kelas: kelas, hafalan: hafalan }).then(function(j) {
+        if (nomorPermintaan !== permintaanTerakhir) return; // pilihan sudah berganti
+        var siswaData = j.siswa;
+
+        if (siswaData.length === 0) {
+          div.innerHTML = "<div class='pesan-kosong'>Tidak ada data siswa.</div>";
+          btnBox.style.display = "none";
+          return;
+        }
+
+        var html = "";
+        siswaData.forEach(function(s) {
+          var aman = escapeHtml(s.nama);
+          var terakhir = escapeHtml(s.terakhir || "");
+          html += "<div class='card-siswa'>";
+          html += "<div class='nama-siswa'>" + aman + "</div>";
+          html += "<input type='text' class='input-hafalan' data-nama='" + aman + "' value='" + terakhir + "' placeholder='Ketik setoran...'>";
+          html += "</div>";
+        });
+
+        div.innerHTML = html;
+        btnBox.style.display = "block";
+      }).catch(function(err) {
+        if (nomorPermintaan !== permintaanTerakhir) return;
+        div.innerHTML = "<div class='pesan-kosong'>Gagal memuat data siswa. Periksa koneksi internet lalu pilih ulang kelas.</div>";
+      });
+    }
+
+    // Mengosongkan semua kolom di layar saja. Data di Google Sheets tidak disentuh.
+    function bersihkan() {
+      var inputs = document.querySelectorAll(".input-hafalan");
+      var adaIsi = false;
+      inputs.forEach(function(input) { if (input.value.trim() !== "") adaIsi = true; });
+      if (!adaIsi) return;
+
+      if (confirm("Kosongkan semua isian di layar? Data yang sudah tersimpan di database tidak akan terhapus.")) {
+        inputs.forEach(function(input) { input.value = ""; });
+      }
+    }
+
+    function simpan() {
+      var kelas = document.getElementById("kelas").value;
+      var hafalan = document.getElementById("hafalan").value;
+      var inputs = document.querySelectorAll(".input-hafalan");
+      var data = [];
+
+      var tanggal = new Date().toLocaleDateString('id-ID');
+      var pesanWA = "*Laporan Setoran Hafalan*\n";
+      pesanWA += "Kelas: " + kelas + "\n";
+      pesanWA += "Hafalan: " + hafalan + "\n";
+      pesanWA += "Tanggal: " + tanggal + "\n\n";
+
+      var adaSetoran = false;
+      var nomor = 1;
+
+      inputs.forEach(function(input) {
+        var namaSiswa = input.getAttribute("data-nama");
+        var hafalanSiswa = input.value;
+
+        data.push({ nama: namaSiswa, hafalan: hafalanSiswa });
+
+        if (hafalanSiswa.trim() !== "") {
+          pesanWA += nomor + ". " + namaSiswa + " : " + hafalanSiswa + "\n";
+          nomor++;
+          adaSetoran = true;
+        }
+      });
+
+      if (!adaSetoran) {
+        alert("Isi minimal satu setoran!");
+        return;
+      }
+
+      document.getElementById("linkWaBox").style.display = "none";
+      var btn = document.getElementById("btnSimpan");
+      var btnBersih = document.getElementById("btnBersihkan");
+      btn.innerHTML = "MENYIMPAN...";
+      btn.disabled = true;
+      btnBersih.disabled = true;
+
+      apiPost({ data: data, kelas: kelas, hafalan: hafalan }).then(function() {
+        btn.innerHTML = "SIMPAN & WA";
+        btn.disabled = false;
+        btnBersih.disabled = false;
+
+        var waUrl = "https://wa.me/?text=" + encodeURIComponent(pesanWA);
+        var linkWa = document.getElementById("linkWa");
+        linkWa.href = waUrl;
+        document.getElementById("linkWaBox").style.display = "block";
+
+        window.location.href = waUrl;
+      }).catch(function(err) {
+        btn.innerHTML = "SIMPAN & WA";
+        btn.disabled = false;
+        btnBersih.disabled = false;
+        alert("Gagal menyimpan. Data belum tersimpan, periksa koneksi internet lalu coba lagi.");
+      });
+    }
+  </script>
+</body>
+</html>
