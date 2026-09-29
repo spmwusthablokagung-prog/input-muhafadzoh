@@ -214,7 +214,7 @@
 
   <script>
     // GANTI dengan URL Web App dari Apps Script (Deploy > Manage deployments), berakhiran /exec
-    var API_URL = "https://script.google.com/macros/s/AKfycbyZO3RuuIElNY41jteazGP5HjSa2DNCCPLgNv8k8vynoomjs8BpcDHJIr_CJcHpPBAjBQ/exec";
+    var API_URL = "PASTE_URL_WEB_APP_DI_SINI";
 
     function apiGet(params) {
       var q = Object.keys(params).map(function(k) {
@@ -246,9 +246,17 @@
       });
     }
 
+    // Menyimpan jumlah halaman tiap hafalan, contoh: { "Juz Amma": "90" }
+    var halamanHafalan = {};
+
     apiGet({ action: "init" }).then(function(j) {
       isiDropdown("kelas", j.kelas);
-      isiDropdown("hafalan", j.hafalan);
+      var namaHafalan = [];
+      j.hafalan.forEach(function(h) {
+        namaHafalan.push(h.nama);
+        halamanHafalan[h.nama] = h.halaman;
+      });
+      isiDropdown("hafalan", namaHafalan);
     }).catch(function(err) {
       document.getElementById("daftarSiswa").innerHTML =
         "<div class='pesan-kosong'>Gagal memuat data. Periksa koneksi internet lalu muat ulang halaman.</div>";
@@ -333,6 +341,13 @@
       var pesanWA = "*Laporan Setoran Hafalan*\n";
       pesanWA += "Kelas: " + kelas + "\n";
       pesanWA += "Hafalan: " + hafalan + "\n";
+      var jumlahHalaman = halamanHafalan[hafalan];
+      if (jumlahHalaman) {
+        // Jika isi sheet hanya angka (contoh: 90), otomatis ditambah kata "Halaman".
+        // Jika sudah ada tulisan (contoh: "90 Halaman" atau "1000 Bait"), dipakai apa adanya.
+        var teksJumlah = /^\d+$/.test(jumlahHalaman) ? jumlahHalaman + " Halaman" : jumlahHalaman;
+        pesanWA += "Jumlah : " + teksJumlah + "\n";
+      }
       pesanWA += "Tanggal: " + tanggal + "\n\n";
 
       var adaSetoran = false;
